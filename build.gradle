@@ -15,7 +15,11 @@ buildscript {
 }
 
 allprojects {
+
     repositories {
+        maven{
+            url "https://dl.bintray.com/glossimarwanwan/maven"
+        }
         jcenter()
     }
 }
