@@ -8,8 +8,6 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.bignerdranch.android.libwan.CircleImageWan;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -51,7 +49,7 @@ public class ImageLoad {
         }).start();
     }
 
-    public static void getImage(final Activity activity, final String imageURL, final CircleImageWan circleImageView){
+    public static void getCircleImage(final Activity activity, final String imageURL, final CircleImageViewWan circleImageView){
         new Thread(new Runnable() {
             @Override
             public void run() {

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CircleImageViewWan">
+        <attr name="BorderWith" format="dimension"/>
+        <attr name="BorderColor" format="color"/>
+        <attr name="changeSize" format="boolean"/>
+    </declare-styleable>
+</resources>
