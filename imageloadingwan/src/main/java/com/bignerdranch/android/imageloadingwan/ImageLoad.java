@@ -8,6 +8,8 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bignerdranch.android.libwan.CircleImageWan;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,6 +23,7 @@ import java.security.MessageDigest;
  */
 
 public class ImageLoad {
+
     public static void getImage(final Activity activity, final String imageURL, final ImageView imageView){
         new Thread(new Runnable() {
             @Override
@@ -38,6 +41,33 @@ public class ImageLoad {
                     Bitmap bitmap= null;
                     if (saveBitmapToSD(bitmap,imageURL,inputStream)!=null)
                     showImage(activity,imageView,saveBitmapToSD(bitmap,imageURL,inputStream));
+                    else {
+                        Toast.makeText(activity,"图片保存失败",Toast.LENGTH_LONG).show();
+                        Log.d("SAVE_BITMAP_TO_SDCARD", "run:  图片保存失败 ");
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }            }
+        }).start();
+    }
+
+    public static void getImage(final Activity activity, final String imageURL, final CircleImageWan circleImageView){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection connection;
+                BufferedReader bufferedReader;
+                try{
+                    URL url=new URL(imageURL);
+                    connection=(HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("GET");
+                    connection.setReadTimeout(8000);
+                    connection.setConnectTimeout(8000);
+                    InputStream inputStream=connection.getInputStream();
+
+                    Bitmap bitmap= null;
+                    if (saveBitmapToSD(bitmap,imageURL,inputStream)!=null)
+                        showImage(activity,circleImageView,saveBitmapToSD(bitmap,imageURL,inputStream));
                     else {
                         Toast.makeText(activity,"图片保存失败",Toast.LENGTH_LONG).show();
                         Log.d("SAVE_BITMAP_TO_SDCARD", "run:  图片保存失败 ");
