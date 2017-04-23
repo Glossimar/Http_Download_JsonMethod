@@ -64,7 +64,7 @@ public class CircleImageViewWan extends android.support.v7.widget.AppCompatImage
         if (mBitmap==null)
             return;
 
-        canvas.drawCircle(getWidth()/2,getHeight()/2,mDrawableRadius,mDrawablePaint);
+        canvas.drawCircle(getWidth()/2,getHeight()/2,mDrawableRadius-mBorderWidth,mDrawablePaint);
         if (mBorderWidth!=0){
             canvas.drawCircle(getWidth()/2,getHeight()/2,mBorderRadius,mBorderPaint);
         }
@@ -82,7 +82,7 @@ public class CircleImageViewWan extends android.support.v7.widget.AppCompatImage
         mBitmap=((BitmapDrawable)drawable).getBitmap();
     }
 
-    public void init(){
+    public void init() {
         super.setScaleType(ScaleType.CENTER_CROP);
 
         mBitmapShader=new BitmapShader(mBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
@@ -116,11 +116,13 @@ public class CircleImageViewWan extends android.support.v7.widget.AppCompatImage
         if (mDrawableRect.height() != 0) {
             if (mChangeSize) {
                 if (mBitmapHeight / mDrawableRect.height() < mBitmapWidth / mDrawableRect.width()) {
-                    scale = (mDrawableRect.height() / (float) mBitmapHeight);
-                    dx = (mDrawableRect.width() - mBitmapWidth * scale) * 0.5f;
+                    scale = ((mDrawableRect.height() - mBorderWidth * 2) / (float) mBitmapHeight);
+                    dx = (mDrawableRect.width() - (mBitmapWidth) * scale) * 0.5f;
+                    dy = (mDrawableRect.height() - (mBitmapHeight ) * scale) * 0.5f;
                 } else {
-                    scale = mDrawableRect.width() / (float) mBitmapWidth;
-                    dy = (mDrawableRect.height() - mBitmapHeight * scale) * 0.5f;
+                    scale = (mDrawableRect.width() - mBorderWidth * 2) / (float) mBitmapWidth;
+                    dy = (mDrawableRect.height() - (mBitmapHeight ) * scale) * 0.5f;
+                    dx = (mDrawableRect.width() - (mBitmapWidth) * scale) * 0.5f;
                 }
                 Log.d(TAG, "getMatrixChange: " + mDrawableRect.height() + "、" + mBitmapHeight + "、" + scale);
                 mMatrix.setScale(scale, scale);
