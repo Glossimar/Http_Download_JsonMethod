@@ -48,7 +48,7 @@ public class CircleImageViewWan extends android.support.v7.widget.AppCompatImage
 
     public CircleImageViewWan(Context context, AttributeSet attrs) {
         super(context, attrs,0);
-        TypedArray typedArray=context.getTheme().obtainStyledAttributes(attrs,R.styleable.CircleImageViewWan,0,0);
+        TypedArray typedArray=context.getTheme().obtainStyledAttributes(attrs, R.styleable.CircleImageViewWan,0,0);
         try {
             mBorderColor=typedArray.getColor(R.styleable.CircleImageViewWan_BorderColor, Color.BLACK);
             mBorderWidth=typedArray.getDimensionPixelSize(R.styleable.CircleImageViewWan_BorderWith,0);
@@ -80,6 +80,14 @@ public class CircleImageViewWan extends android.support.v7.widget.AppCompatImage
     public void setImageDrawable(Drawable drawable) {
         super.setImageDrawable(drawable);
         mBitmap=((BitmapDrawable)drawable).getBitmap();
+        Log.d(TAG, "setImageDrawable: ,,,,,,,,,,,,,,,,,,,,,,,,,,,setImageDrawable");
+    }
+
+    @Override
+    public void setImageBitmap(Bitmap bm) {
+        super.setImageBitmap(bm);
+        mBitmap = bm;
+        Log.d(TAG, "setImageBitmap: ................................setImageBitmap");
     }
 
     public void init() {
@@ -127,7 +135,6 @@ public class CircleImageViewWan extends android.support.v7.widget.AppCompatImage
                 Log.d(TAG, "getMatrixChange: " + mDrawableRect.height() + "、" + mBitmapHeight + "、" + scale);
                 mMatrix.setScale(scale, scale);
                 mMatrix.postTranslate(dx, dy);
-
 
                 mBitmapShader.setLocalMatrix(mMatrix);
             }

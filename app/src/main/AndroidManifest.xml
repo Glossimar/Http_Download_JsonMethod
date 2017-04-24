@@ -7,7 +7,7 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/sss"
-        android:label="小姐姐照片"
+        android:label="Myapplacation"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">

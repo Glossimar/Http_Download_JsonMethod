@@ -50,7 +50,8 @@ public class MainActivity extends AppCompatActivity {
                 for (int i=0;i<o.length;i++) {
                     Imageurl[i] = o[i].toString();
                 }
-
+                Gson gson = new Gson();
+                gson.fromJson(response,RunUI.class);
                 s=(Boolean) method.paresJsonObject(response, "error");
                 RunUI.getImage(MainActivity.this,Imageurl[1],imageView);
             }

@@ -16,6 +16,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * Created by LENOVO on 2017/4/6.
  */
@@ -37,8 +39,11 @@ public class ImageLoad {
                     InputStream inputStream=connection.getInputStream();
 
                     Bitmap bitmap= null;
-                    if (saveBitmapToSD(bitmap,imageURL,inputStream)!=null)
-                    showImage(activity,imageView,saveBitmapToSD(bitmap,imageURL,inputStream));
+                    if (saveBitmapToSD(bitmap,imageURL,inputStream)!=null){
+                        bitmap =saveBitmapToSD(bitmap,imageURL,inputStream);
+                        showImage(activity,imageView,saveBitmapToSD(bitmap,imageURL,inputStream));
+                        Log.d(TAG, "run: "+bitmap.getHeight()+bitmap.getWidth());
+                    }
                     else {
                         Toast.makeText(activity,"图片保存失败",Toast.LENGTH_LONG).show();
                         Log.d("SAVE_BITMAP_TO_SDCARD", "run:  图片保存失败 ");
@@ -61,11 +66,22 @@ public class ImageLoad {
                     connection.setRequestMethod("GET");
                     connection.setReadTimeout(8000);
                     connection.setConnectTimeout(8000);
-                    InputStream inputStream=connection.getInputStream();
+                    final InputStream inputStream=connection.getInputStream();
 
-                    Bitmap bitmap= null;
-                    if (saveBitmapToSD(bitmap,imageURL,inputStream)!=null)
-                        showImage(activity,circleImageView,saveBitmapToSD(bitmap,imageURL,inputStream));
+                    final Bitmap[] bitmap = {null};
+                    if (saveBitmapToSD(bitmap[0],imageURL,inputStream)!=null){
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                bitmap[0] =saveBitmapToSD(bitmap[0],imageURL,inputStream);
+                                circleImageView.setImageBitmap(bitmap[0]);
+                                circleImageView.init();
+                                showImage(activity,circleImageView,saveBitmapToSD(bitmap[0],imageURL,inputStream));
+                            }
+                        });
+
+                    }
+
                     else {
                         Toast.makeText(activity,"图片保存失败",Toast.LENGTH_LONG).show();
                         Log.d("SAVE_BITMAP_TO_SDCARD", "run:  图片保存失败 ");
@@ -87,13 +103,13 @@ public class ImageLoad {
 
     private static Bitmap saveBitmapToSD(Bitmap bitmap,String imageURL,InputStream inputStream){
         File f= Environment.getExternalStorageDirectory();
-        String filename=f.toString()+File.separator+getMD5(imageURL);
+        String filename=f.toString()+File.separator+getMD5(imageURL)+".png";
         Log.d("saveBitmapToSD", "saveBitmapToSD: The name saved in SD card is "+filename);
         File file=new File(filename);
         FileOutputStream fos=null;
         if (file.exists()) {
             Log.d("FILEXTIS", "saveBitmapToSD: 图片已经存在");
-            bitmap=BitmapFactory.decodeFile(filename);
+            bitmap= BitmapFactory.decodeFile(filename);
             Log.d("BITMAPFACTORYRETURN", "saveBitmapToSD: "+BitmapFactory.decodeFile(filename));
             return bitmap;
         }else {
