@@ -33,7 +33,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
-version = "1.0.5"
+version = "1.0.6"
 
 def siteUrl = 'https://github.com/SunWanQi/Http_Download_JsonMethod' // 项目主页。
 def gitUrl = 'git@github.com:SunWanQi/Http_Download_JsonMethod.git' // Git仓库的url。

@@ -36,8 +36,8 @@ public class HttpMethod {
                     URL url = new URL(urlAddress);
                     connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
-                    connection.setConnectTimeout(8000);
-                    connection.setReadTimeout(8000);
+                    connection.setConnectTimeout(16000);
+                    connection.setReadTimeout(16000);
 
                     InputStream in = connection.getInputStream();
                     reader = new BufferedReader(new InputStreamReader(in));
