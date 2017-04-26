@@ -132,7 +132,7 @@ public class CircleImageViewWan extends android.support.v7.widget.AppCompatImage
                     dy = (mDrawableRect.height() - (mBitmapHeight ) * scale) * 0.5f;
                     dx = (mDrawableRect.width() - (mBitmapWidth) * scale) * 0.5f;
                 }
-                Log.d(TAG, "getMatrixChange: " + mDrawableRect.height() + "、" + mBitmapHeight + "、" + scale);
+                Log.d(TAG, "getMatrixChange: " + mDrawableRect.height() + "and" + mBitmapHeight + "and" + scale);
                 mMatrix.setScale(scale, scale);
                 mMatrix.postTranslate(dx, dy);
 
