@@ -25,7 +25,16 @@ import static android.content.ContentValues.TAG;
 public class ImageLoad {
 
     public static void getImage(final Activity activity, final String imageURL, final ImageView imageView){
-        new Thread(new Runnable() {
+        if (isImageExists(imageURL)) {
+            final Bitmap bitmap= BitmapFactory.decodeFile(getImageFilePath(imageURL));
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showImage(activity,imageView,bitmap);
+                }
+            });
+        } else {
+            new Thread(new Runnable() {
             @Override
             public void run() {
                 HttpURLConnection connection;
@@ -51,10 +60,23 @@ public class ImageLoad {
                     e.printStackTrace();
                 }            }
         }).start();
+        }
     }
 
     public static void getCircleImage(final Activity activity, final String imageURL, final CircleImageViewWan circleImageView){
-        new Thread(new Runnable() {
+
+        if (isImageExists(imageURL)) {
+            final Bitmap bitmap= BitmapFactory.decodeFile(getImageFilePath(imageURL));
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    circleImageView.setImageBitmap(bitmap);
+                    circleImageView.init();
+                    showImage(activity,circleImageView,bitmap);
+                }
+            });
+        } else {
+            new Thread(new Runnable() {
             @Override
             public void run() {
                 HttpURLConnection connection;
@@ -89,6 +111,7 @@ public class ImageLoad {
                     e.printStackTrace();
                 }            }
         }).start();
+        }
     }
 
     private static void showImage(Activity activity, final ImageView imageView, final Bitmap bitmap){
@@ -154,6 +177,21 @@ public class ImageLoad {
         }catch (Exception e){
             e.printStackTrace();
             return "ERROR";
+        }
+    }
+
+    public static String getImageFilePath(String imageURL) {
+        File f = Environment.getExternalStorageDirectory();
+        String filename = f.toString()+File.separator+getMD5(imageURL)+".png";
+        return filename;
+    }
+
+    public static boolean isImageExists(String imageUrl) {
+        File file = new File(getImageFilePath(imageUrl));
+        if (file.exists()) {
+            return  true;
+        } else {
+            return false;
         }
     }
 }
