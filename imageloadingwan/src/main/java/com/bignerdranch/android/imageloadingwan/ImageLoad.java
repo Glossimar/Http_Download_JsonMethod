@@ -39,6 +39,7 @@ public class ImageLoad {
             public void run() {
                 HttpURLConnection connection;
                 BufferedReader bufferedReader;
+                CheckNetwork checkNetwork = new CheckNetwork(activity);
 
                 try{
                     URL url=new URL(imageURL);
@@ -49,6 +50,7 @@ public class ImageLoad {
                     InputStream inputStream = connection.getInputStream();
 
                     Bitmap bitmap= null;
+                    if (checkNetwork.isNetworkConnected() && checkNetwork.isWifiConnected()) {
                         if (saveBitmapToSD(bitmap, imageURL, inputStream) != null) {
                             bitmap = saveBitmapToSD(bitmap, imageURL, inputStream);
                             showImage(activity, imageView, saveBitmapToSD(bitmap, imageURL, inputStream));
@@ -59,6 +61,10 @@ public class ImageLoad {
                         bitmap = BitmapFactory.decodeStream(inputStream);
                         showImage(activity, imageView, bitmap);
                         Log.d(TAG, "run: " + bitmap.getHeight() + bitmap.getWidth());
+                    } else if (checkNetwork.isNetworkConnected() && checkNetwork.isMobileConnected()){
+                        bitmap = BitmapFactory.decodeStream(inputStream);
+                        showImage(activity, imageView, bitmap);
+                    }
                 }catch (Exception e){
                     e.printStackTrace();
                 }            }
