@@ -40,8 +40,6 @@ public class ImageLoad {
                 HttpURLConnection connection;
                 BufferedReader bufferedReader;
 
-                CheckNetwork checkNetwork = new CheckNetwork(activity);
-
                 try{
                     URL url=new URL(imageURL);
                     connection=(HttpURLConnection) url.openConnection();
@@ -51,7 +49,6 @@ public class ImageLoad {
                     InputStream inputStream = connection.getInputStream();
 
                     Bitmap bitmap= null;
-                    if (checkNetwork.isNetworkConnected() && checkNetwork.isWifiConnected()) {
                         if (saveBitmapToSD(bitmap, imageURL, inputStream) != null) {
                             bitmap = saveBitmapToSD(bitmap, imageURL, inputStream);
                             showImage(activity, imageView, saveBitmapToSD(bitmap, imageURL, inputStream));
@@ -59,11 +56,9 @@ public class ImageLoad {
                         } else {
                             Toast.makeText(activity, "图片保存失败", Toast.LENGTH_LONG).show();
                         }
-                    } else if (checkNetwork.isNetworkConnected() && checkNetwork.isMobileConnected()){
                         bitmap = BitmapFactory.decodeStream(inputStream);
                         showImage(activity, imageView, bitmap);
                         Log.d(TAG, "run: " + bitmap.getHeight() + bitmap.getWidth());
-                    }
                 }catch (Exception e){
                     e.printStackTrace();
                 }            }
@@ -90,8 +85,6 @@ public class ImageLoad {
                 HttpURLConnection connection;
                 BufferedReader bufferedReader;
 
-                CheckNetwork checkNetwork = new CheckNetwork(activity);
-
                 try{
                     URL url=new URL(imageURL);
                     connection=(HttpURLConnection) url.openConnection();
@@ -101,7 +94,6 @@ public class ImageLoad {
                     final InputStream inputStream=connection.getInputStream();
 
                     final Bitmap[] bitmap = {null};
-                    if (checkNetwork.isNetworkConnected() && checkNetwork.isWifiConnected()) {
                         if (saveBitmapToSD(bitmap[0], imageURL, inputStream) != null) {
                             activity.runOnUiThread(new Runnable() {
                                 @Override
@@ -115,10 +107,8 @@ public class ImageLoad {
                         } else {
                             Toast.makeText(activity, "图片保存失败", Toast.LENGTH_LONG).show();
                         }
-                    } else if (checkNetwork.isNetworkConnected() && checkNetwork.isMobileConnected()) {
                         bitmap[0] = BitmapFactory.decodeStream(inputStream);
                         showImage(activity, circleImageView, bitmap[0]);
-                    }
                 }catch (Exception e){
                     e.printStackTrace();
                 }            }
