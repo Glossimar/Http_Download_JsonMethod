@@ -13,7 +13,7 @@ import android.widget.Toast;
  * Created by LENOVO on 2017/4/28.
  */
 
-public class CheakPermission extends AppCompatActivity{
+public class CheckPermission extends AppCompatActivity{
     public static final int UNABLE_START = 1;
     public static final int UNABLE_USE = 2;
 
@@ -22,7 +22,7 @@ public class CheakPermission extends AppCompatActivity{
         if (activity == null) {
             throw new RuntimeException("未传入有效的Activity");
         } else {
-            CheakPermission.activity = activity;
+            CheckPermission.activity = activity;
         }
         if (permission == null) {
             Toast.makeText(activity, "未传入相应权限", Toast.LENGTH_SHORT).show();
@@ -39,7 +39,7 @@ public class CheakPermission extends AppCompatActivity{
         switch (requestCode) {
             case 1:
                 if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(CheakPermission.activity, "拒绝权限将无法使用程序", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CheckPermission.activity, "拒绝权限将无法使用程序", Toast.LENGTH_SHORT).show();
                     activity.finish();
                 }
                 break;

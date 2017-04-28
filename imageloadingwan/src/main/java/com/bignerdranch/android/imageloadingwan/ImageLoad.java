@@ -24,7 +24,7 @@ import static android.content.ContentValues.TAG;
 
 public class ImageLoad {
 
-    public static void getImage(final Activity activity, final String imageURL, final ImageView imageView){
+    public static void getImage(final Activity activity, final String imageURL, final ImageView imageView) {
         if (isImageExists(imageURL)) {
             final Bitmap bitmap= BitmapFactory.decodeFile(getImageFilePath(imageURL));
             activity.runOnUiThread(new Runnable() {
@@ -39,22 +39,30 @@ public class ImageLoad {
             public void run() {
                 HttpURLConnection connection;
                 BufferedReader bufferedReader;
+
+                CheckNetwork checkNetwork = new CheckNetwork(activity);
+
                 try{
                     URL url=new URL(imageURL);
                     connection=(HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
                     connection.setReadTimeout(8000);
                     connection.setConnectTimeout(8000);
-                    InputStream inputStream=connection.getInputStream();
+                    InputStream inputStream = connection.getInputStream();
 
                     Bitmap bitmap= null;
-                    if (saveBitmapToSD(bitmap,imageURL,inputStream)!=null){
-                        bitmap =saveBitmapToSD(bitmap,imageURL,inputStream);
-                        showImage(activity,imageView,saveBitmapToSD(bitmap,imageURL,inputStream));
-                        Log.d(TAG, "run: "+bitmap.getHeight()+bitmap.getWidth());
-                    }
-                    else {
-                        Toast.makeText(activity,"图片保存失败",Toast.LENGTH_LONG).show();
+                    if (checkNetwork.isNetworkConnected() && checkNetwork.isWifiConnected()) {
+                        if (saveBitmapToSD(bitmap, imageURL, inputStream) != null) {
+                            bitmap = saveBitmapToSD(bitmap, imageURL, inputStream);
+                            showImage(activity, imageView, saveBitmapToSD(bitmap, imageURL, inputStream));
+                            Log.d(TAG, "run: " + bitmap.getHeight() + bitmap.getWidth());
+                        } else {
+                            Toast.makeText(activity, "图片保存失败", Toast.LENGTH_LONG).show();
+                        }
+                    } else if (checkNetwork.isNetworkConnected() && checkNetwork.isMobileConnected()){
+                        bitmap = BitmapFactory.decodeStream(inputStream);
+                        showImage(activity, imageView, bitmap);
+                        Log.d(TAG, "run: " + bitmap.getHeight() + bitmap.getWidth());
                     }
                 }catch (Exception e){
                     e.printStackTrace();
@@ -81,6 +89,9 @@ public class ImageLoad {
             public void run() {
                 HttpURLConnection connection;
                 BufferedReader bufferedReader;
+
+                CheckNetwork checkNetwork = new CheckNetwork(activity);
+
                 try{
                     URL url=new URL(imageURL);
                     connection=(HttpURLConnection) url.openConnection();
@@ -90,22 +101,23 @@ public class ImageLoad {
                     final InputStream inputStream=connection.getInputStream();
 
                     final Bitmap[] bitmap = {null};
-                    if (saveBitmapToSD(bitmap[0],imageURL,inputStream)!=null){
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                bitmap[0] =saveBitmapToSD(bitmap[0],imageURL,inputStream);
-                                circleImageView.setImageBitmap(bitmap[0]);
-                                circleImageView.init();
-                                showImage(activity,circleImageView,saveBitmapToSD(bitmap[0],imageURL,inputStream));
-                            }
-                        });
-
-                    }
-
-                    else {
-                        Toast.makeText(activity,"图片保存失败",Toast.LENGTH_LONG).show();
-
+                    if (checkNetwork.isNetworkConnected() && checkNetwork.isWifiConnected()) {
+                        if (saveBitmapToSD(bitmap[0], imageURL, inputStream) != null) {
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    bitmap[0] = saveBitmapToSD(bitmap[0], imageURL, inputStream);
+                                    circleImageView.setImageBitmap(bitmap[0]);
+                                    circleImageView.init();
+                                    showImage(activity, circleImageView, saveBitmapToSD(bitmap[0], imageURL, inputStream));
+                                }
+                            });
+                        } else {
+                            Toast.makeText(activity, "图片保存失败", Toast.LENGTH_LONG).show();
+                        }
+                    } else if (checkNetwork.isNetworkConnected() && checkNetwork.isMobileConnected()) {
+                        bitmap[0] = BitmapFactory.decodeStream(inputStream);
+                        showImage(activity, circleImageView, bitmap[0]);
                     }
                 }catch (Exception e){
                     e.printStackTrace();
