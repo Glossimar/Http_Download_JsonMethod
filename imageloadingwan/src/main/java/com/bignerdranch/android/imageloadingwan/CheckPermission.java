@@ -20,13 +20,13 @@ public class CheckPermission extends AppCompatActivity{
     private static Activity activity;
     public static void cheakActivityPermission(Activity activity, String permission, int processingMethod) {
         if (activity == null) {
-            throw new RuntimeException("未传入有效的Activity");
+            throw new RuntimeException("No effective activity is passed in");
         } else {
             CheckPermission.activity = activity;
         }
         if (permission == null) {
-            Toast.makeText(activity, "未传入相应权限", Toast.LENGTH_SHORT).show();
-            throw new RuntimeException("相应权限传入失败");
+            Toast.makeText(activity, "No permissions are passed in", Toast.LENGTH_SHORT).show();
+            throw new RuntimeException("The corresponding permission access failed");
         }
 
         if (ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
@@ -39,13 +39,13 @@ public class CheckPermission extends AppCompatActivity{
         switch (requestCode) {
             case 1:
                 if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(CheckPermission.activity, "拒绝权限将无法使用程序", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CheckPermission.activity, "Reject permission will not be able to use the program", Toast.LENGTH_SHORT).show();
                     activity.finish();
                 }
                 break;
             case 2:
                 if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(activity, "该程序的部分功能将无法使用", Toast.LENGTH_SHORT);
+                    Toast.makeText(activity, "Some of the functions of the program will not be available", Toast.LENGTH_SHORT);
                 }
                 break;
             default:
