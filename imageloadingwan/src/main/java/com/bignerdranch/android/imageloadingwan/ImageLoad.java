@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -50,20 +51,13 @@ public class ImageLoad {
                     InputStream inputStream = connection.getInputStream();
 
                     Bitmap bitmap= null;
-                    if (checkNetwork.isNetworkConnected() && checkNetwork.isWifiConnected()) {
-                        if (saveBitmapToSD(bitmap, imageURL, inputStream) != null) {
-                            bitmap = saveBitmapToSD(bitmap, imageURL, inputStream);
-                            showImage(activity, imageView, saveBitmapToSD(bitmap, imageURL, inputStream));
-                            Log.d(TAG, "run: " + bitmap.getHeight() + bitmap.getWidth());
-                        } else {
-                            Toast.makeText(activity, "图片保存失败", Toast.LENGTH_LONG).show();
-                        }
-                        bitmap = BitmapFactory.decodeStream(inputStream);
-                        showImage(activity, imageView, bitmap);
+
+                    if (saveBitmapToSD(bitmap, imageURL, inputStream) != null) {
+                        bitmap = saveBitmapToSD(bitmap, imageURL, inputStream);
+                        showImage(activity, imageView, saveBitmapToSD(bitmap, imageURL, inputStream));
                         Log.d(TAG, "run: " + bitmap.getHeight() + bitmap.getWidth());
-                    } else if (checkNetwork.isNetworkConnected() && checkNetwork.isMobileConnected()){
-                        bitmap = BitmapFactory.decodeStream(inputStream);
-                        showImage(activity, imageView, bitmap);
+                    } else {
+                        Toast.makeText(activity, "图片保存失败", Toast.LENGTH_LONG).show();
                     }
                 }catch (Exception e){
                     e.printStackTrace();
@@ -90,6 +84,7 @@ public class ImageLoad {
             public void run() {
                 HttpURLConnection connection;
                 BufferedReader bufferedReader;
+                CheckNetwork checkNetwork = new CheckNetwork(activity);
 
                 try{
                     URL url=new URL(imageURL);
@@ -100,8 +95,8 @@ public class ImageLoad {
                     final InputStream inputStream=connection.getInputStream();
 
                     final Bitmap[] bitmap = {null};
-                        if (saveBitmapToSD(bitmap[0], imageURL, inputStream) != null) {
-                            activity.runOnUiThread(new Runnable() {
+                    if (saveBitmapToSD(bitmap[0], imageURL, inputStream) != null) {
+                        activity.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     bitmap[0] = saveBitmapToSD(bitmap[0], imageURL, inputStream);
@@ -110,11 +105,11 @@ public class ImageLoad {
                                     showImage(activity, circleImageView, saveBitmapToSD(bitmap[0], imageURL, inputStream));
                                 }
                             });
-                        } else {
-                            Toast.makeText(activity, "图片保存失败", Toast.LENGTH_LONG).show();
-                        }
-                        bitmap[0] = BitmapFactory.decodeStream(inputStream);
-                        showImage(activity, circleImageView, bitmap[0]);
+                    } else {
+                        Toast.makeText(activity, "图片保存失败", Toast.LENGTH_LONG).show();
+                    }
+//                    bitmap[0] = BitmapFactory.decodeStream(inputStream);
+//                    showImage(activity, circleImageView, bitmap[0]);
                 }catch (Exception e){
                     e.printStackTrace();
                 }            }
@@ -144,9 +139,14 @@ public class ImageLoad {
             Log.d("BITMAPFACTORYRETURN", "saveBitmapToSD: "+BitmapFactory.decodeFile(filename));
             return bitmap;
         }else {
-
-            bitmap=BitmapFactory.decodeStream(inputStream);
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(inputStream, null, options);
+            options.inSampleSize = calcuteImageScale(options, 100, 100);
+            options.inJustDecodeBounds = false;
             try {
+                inputStream.reset();
+                bitmap = BitmapFactory.decodeStream(inputStream, null, options);
                 fos = new FileOutputStream(file);
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
             } catch (Exception e) {
@@ -201,5 +201,17 @@ public class ImageLoad {
         } else {
             return false;
         }
+    }
+
+    public static int calcuteImageScale(BitmapFactory.Options options, int hopeHeihent, int hopeWidth) {
+        int imageHeight = options.outHeight;
+        int imageWidth = options.outWidth;
+        int scale = 1;
+        if (imageHeight > hopeHeihent || imageWidth > hopeWidth) {
+            final int heightScale = Math.round((float) imageHeight / (float) hopeHeihent);
+            final int widthScale = Math.round((float) imageWidth / (float) hopeWidth);
+            scale = heightScale < widthScale ? heightScale : widthScale;
+        }
+        return scale;
     }
 }
